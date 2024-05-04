@@ -12,12 +12,14 @@ type Article struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
 	Tags        pq.StringArray `json:"tags" gorm:"type: varchar(50)[]"`
-	// Tags        string `json:"tags"`
 	Content     string `json:"content"`
 	CreatedAt   string `json:"created_at"`
 	UpdatedAt   string `json:"updated_at"`
 }
 
+// @tags     Article
+// @summary  Get articles
+// @Router   /articles  [get]
 func GetArticles(c *fiber.Ctx) error {
 	log.Info("GetArticles")
 	var articles []Article
@@ -25,6 +27,10 @@ func GetArticles(c *fiber.Ctx) error {
 	return c.JSON(articles)
 }
 
+// @Tags    Article
+// @summary Get article by id
+// @Param   id path string true "article id"
+// @Router  /articles/{id}  [get]
 func GetArticle(c *fiber.Ctx) error {
 	log.Info("GetArticle")
 	var article Article
