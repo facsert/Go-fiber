@@ -8,7 +8,7 @@ import (
 	"github.com/gofiber/swagger"
 
 	"fibert/lib/database"
-	"fibert/lib/router"
+	"fibert/utils/router"
 	"fibert/lib/comm"
 	"fibert/middleware"
 	_ "fibert/docs"
