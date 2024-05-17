@@ -17,6 +17,15 @@ type Article struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
+func Init(api fiber.Router) {
+	router := api.Group("/articles")
+	router.Get("/", GetArticles)
+	router.Get("/:id", GetArticle)
+	router.Post("/:id", CreateArticle)
+	router.Put("/:id", UpdateArticle)
+	router.Delete("/:id", DeleteArticle)
+}
+
 // @tags     Article
 // @summary  Get articles
 // @Router   /articles  [get]

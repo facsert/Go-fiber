@@ -1,9 +1,7 @@
-package swag
+package middleware
 
 import (
-	// "github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/fiber/v2"
-	// "github.com/gofiber/contrib/swagger"
 	"github.com/gofiber/swagger"
 
 	// "fibert/lib/comm"
@@ -20,4 +18,4 @@ func SwaggerInit(app *fiber.App) {
 	// app.Get("/swag/*", swagger.New(swagger.Config{
 	// 	URL: "/swag/swagger.json",
 	// }))
-}
+} 

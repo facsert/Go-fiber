@@ -17,7 +17,8 @@ const (
 	password = "password"
 	databaseName   = "learn"
 )
-func InitDatabase() {
+
+func Init() {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Shanghai",
 	    host, username, password, databaseName, port,

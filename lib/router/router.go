@@ -1,29 +1,16 @@
 package router
 
 import (
-	"sync"
 	"github.com/gofiber/fiber/v2"
 
-	"fibert/api/article"
+	"fibert/api/v1/article"
+	"fibert/api/v1/scan"
 )
 
-var wg sync.WaitGroup
-func InitRouter(app *fiber.App) {
-
+func Init(app *fiber.App) {
 	api := app.Group("/api/v1")
-    wg.Add(1)
-	// article
-    InitArticleRouter(api)
 
-	wg.Wait()
+    article.Init(api)
+	scan.Init(api)
 }
 
-func InitArticleRouter(api fiber.Router) {
-	router := api.Group("/articles")
-	router.Get("/", article.GetArticles)
-	router.Get("/:id", article.GetArticle)
-	router.Post("/:id", article.CreateArticle)
-	router.Put("/:id", article.UpdateArticle)
-	router.Delete("/:id", article.DeleteArticle)
-	wg.Done()
-}
