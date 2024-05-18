@@ -1,23 +1,23 @@
 package scan
 
 import (
-	"archive/zip"
-	"bytes"
-	"compress/gzip"
-	"fmt"
-	"strings"
+    "archive/zip"
+    "bytes"
+    "compress/gzip"
+    "fmt"
+    "strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/fiber/v2/log"
 
-	"fibert/lib/comm"
-	"fibert/utils/messages"
+    "fibert/lib/comm"
+    "fibert/utils/messages"
 )
 
 func Init(api fiber.Router) {
-	router := api.Group("/scan")
-	router.Post("/log", UploadLog)
-	router.Post("/gz", UploadGz)
+    router := api.Group("/scan")
+    router.Post("/log", UploadLog)
+    router.Post("/gz", UploadGz)
 }
 
 
@@ -27,32 +27,32 @@ func Init(api fiber.Router) {
 // @Param    rules formData string true "scan rules"
 // @Router   /scan/log  [post]
 func UploadLog(c *fiber.Ctx) error {
-	tempFile, err := c.FormFile("file")
-	if err != nil { return err }
+    tempFile, err := c.FormFile("file")
+    if err != nil { return err }
     
-	file, err := tempFile.Open()
-	if err != nil { return err }
+    file, err := tempFile.Open()
+    if err != nil { return err }
     
-	rules := strings.Fields(strings.ReplaceAll(c.FormValue("rules"), ",", " "))
+    rules := strings.Fields(strings.ReplaceAll(c.FormValue("rules"), ",", " "))
     log.Infof("%s:%v", tempFile.Filename, rules)
 
-	if strings.HasSuffix(tempFile.Filename, ".gz") {
-		return c.SendString(fmt.Sprintf("%s is package, use scan/gz api", tempFile.Filename))
-	}
+    if strings.HasSuffix(tempFile.Filename, ".gz") {
+        return c.SendString(fmt.Sprintf("%s is package, use scan/gz api", tempFile.Filename))
+    }
 
-	s := messages.NewMessages(file, tempFile.Filename, rules)
-	s.Scan()
+    s := messages.NewMessages(file, tempFile.Filename, rules)
+    s.Scan()
 
-	var buff bytes.Buffer
-	zipWrite := zip.NewWriter(&buff)
+    var buff bytes.Buffer
+    zipWrite := zip.NewWriter(&buff)
 
     err = s.Write(zipWrite)
-	if err != nil { log.Error(err) }
+    if err != nil { log.Error(err) }
 
-	if err := zipWrite.Close(); err != nil { log.Error(err) }
+    if err := zipWrite.Close(); err != nil { log.Error(err) }
 
-	c.Set("Content-Type", "application/zip")
-	c.Set("Content-Disposition", "attachment; filename=result.zip")
+    c.Set("Content-Type", "application/zip")
+    c.Set("Content-Disposition", "attachment; filename=result.zip")
     return c.Send(buff.Bytes())
 }
 
@@ -62,42 +62,42 @@ func UploadLog(c *fiber.Ctx) error {
 // @Param    rules formData string true "scan rules"
 // @Router   /scan/gz  [post]
 func UploadGz(c *fiber.Ctx) error {
-	tempFile, err := c.FormFile("file")
-	if err != nil { return err }
-	
-	if !strings.HasSuffix(tempFile.Filename, ".gz") {
-		return c.SendString(fmt.Sprintf("%s is not package, use scan/log api", tempFile.Filename))
-	}
+    tempFile, err := c.FormFile("file")
+    if err != nil { return err }
+    
+    if !strings.HasSuffix(tempFile.Filename, ".gz") {
+        return c.SendString(fmt.Sprintf("%s is not package, use scan/log api", tempFile.Filename))
+    }
 
-	file, err := tempFile.Open()
-	if err != nil { return err }
+    file, err := tempFile.Open()
+    if err != nil { return err }
 
-	rules := strings.Fields(strings.ReplaceAll(c.FormValue("rules"), ",", " "))
+    rules := strings.Fields(strings.ReplaceAll(c.FormValue("rules"), ",", " "))
     log.Infof("%s:%v", tempFile.Filename, rules)
 
     gzReader, err := gzip.NewReader(file)
-	if err != nil {return err}
+    if err != nil {return err}
 
 
-	s := messages.NewMessages(gzReader, tempFile.Filename, rules)
-	s.Scan()
+    s := messages.NewMessages(gzReader, tempFile.Filename, rules)
+    s.Scan()
 
-	var buff bytes.Buffer
-	zipWrite := zip.NewWriter(&buff)
+    var buff bytes.Buffer
+    zipWrite := zip.NewWriter(&buff)
     err = s.Write(zipWrite)
-	if err != nil { log.Error(err) }
+    if err != nil { log.Error(err) }
 
-	if err := zipWrite.Close(); err != nil { log.Error(err) }
+    if err := zipWrite.Close(); err != nil { log.Error(err) }
 
-	c.Set("Content-Type", "application/zip")
-	c.Set("Content-Disposition", "attachment; filename=result.zip")
+    c.Set("Content-Type", "application/zip")
+    c.Set("Content-Disposition", "attachment; filename=result.zip")
     return c.Send(buff.Bytes())
 }
 
 
 
 func Download(c *fiber.Ctx) error {
-	return c.Download(comm.AbsPath("temp", "download.txt"))
+    return c.Download(comm.AbsPath("temp", "download.txt"))
 
 	// @tags     logScan
 	// @summary  Download file

@@ -15,7 +15,7 @@ import (
 )
 
 func init() {
-	comm.Init()
+    comm.Init()
     database.Init()
 }
 
@@ -29,13 +29,13 @@ const (
 // @host localhost:8050
 // @BasePath /api/v1
 func main() {
-	app := fiber.New()
+    app := fiber.New()
     
     middleware.Init(app)
-	router.Init(app)
-	app.Get("/*", swagger.HandlerDefault)
+    router.Init(app)
+    app.Get("/*", swagger.HandlerDefault)
 	
-	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
+    log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
 }
 
 // app := fiber.New(fiber.Config{
