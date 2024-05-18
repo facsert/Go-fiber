@@ -1,11 +1,12 @@
 package scan
 
 import (
-    "archive/zip"
-    "bytes"
-    "compress/gzip"
-    "fmt"
-    "strings"
+	"archive/zip"
+	"bytes"
+	"compress/gzip"
+	"fmt"
+	"bufio"
+	"strings"
 
     "github.com/gofiber/fiber/v2"
     "github.com/gofiber/fiber/v2/log"
@@ -15,11 +16,34 @@ import (
 )
 
 func Init(api fiber.Router) {
-    router := api.Group("/scan")
-    router.Post("/log", UploadLog)
-    router.Post("/gz", UploadGz)
+
+	router := api.Group("/scan")
+	router.Post("/file", UploadFile)
+	router.Post("/log", UploadLog)
+	router.Post("/gz", UploadGz)
 }
 
+// @tags     logScan
+// @summary  Upload file
+// @Param    file formData file true "upload file"
+// @Router   /scan/file  [post]
+func UploadFile(c *fiber.Ctx) error {
+	tempFile, err := c.FormFile("file")
+	if err != nil { return err }
+    
+	file, err := tempFile.Open()
+	if err != nil { return err }
+
+	log.Info(c.FormValue("rules"))
+    
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		log.Info(scanner.Text())
+	}
+	return c.JSON(map[string]string{
+		"filename": tempFile.Filename,
+	})
+}
 
 // @tags     logScan
 // @summary  Upload file
