@@ -12,11 +12,13 @@ import (
 	"fibert/lib/comm"
 	"fibert/middleware"
 	_ "fibert/docs"
+	"fibert/api/v1/socket"
 )
 
 func init() {
 	comm.Init()
     database.Init()
+	
 }
 
 const (
@@ -33,6 +35,7 @@ func main() {
     
     middleware.Init(app)
 	router.Init(app)
+	socket.Init(app)
 	app.Get("/*", swagger.HandlerDefault)
 	
 	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
