@@ -1,2 +1,2 @@
 # Go-gin
-Go web with gin
+Go web with fiber

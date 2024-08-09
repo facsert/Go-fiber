@@ -4,13 +4,14 @@ import (
 	// "time"
 	"os"
 	"io"
+	"time"
 	"path/filepath"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/log"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/fiber/v3/log"
 
-	"fibert/lib/comm"
+	"panel/utils/comm"
 )
 
 var (
@@ -19,7 +20,7 @@ var (
 )
 
 
-func Logger() func(*fiber.Ctx) error {
+func Logger() func(fiber.Ctx) error {
     
 	// 设置 log 输出 level 和 输出文件
 	log.SetLevel(logLevel)
@@ -28,12 +29,26 @@ func Logger() func(*fiber.Ctx) error {
 	if err != nil { log.Error("Create log failed") }
 	log.SetOutput(io.MultiWriter(os.Stdout, file))
 	
-
-    // 设置 logger 中间件, 打印请求
 	return logger.New(logger.Config{
-        Format: "${time} [${method}: ${status}] ${path} ${latency}\n",
-		TimeFormat: "2006/01/02 15:04:05.000000",
-        Output: io.MultiWriter(os.Stdout, file),
-		TimeZone:   "Asia/Shanghai",
+		Next:          nil,
+		Done:          nil,
+		Format:        "[${time}][${method}: ${status}] ${path} ${latency}\n",
+		TimeFormat:    "2006/01/02 15:04:05",
+		TimeZone:      "Asia/Shanghai",
+		TimeInterval:  500 * time.Millisecond,
+		Output:        io.MultiWriter(os.Stdout, file),
+		DisableColors: false,
 	})
+    
+	// Default
+	// return logger.New(logger.Config{
+	// 	Next:          nil,
+	// 	Done:          nil,
+	// 	Format:        "[${time}] ${ip} ${status} - ${latency} ${method} ${path} ${error}\n",
+	// 	TimeFormat:    "15:04:05",
+	// 	TimeZone:      "Local",
+	// 	TimeInterval:  500 * time.Millisecond,
+	// 	Output:        os.Stdout,
+	// 	DisableColors: false,
+	// })
 }
