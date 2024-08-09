@@ -9,7 +9,14 @@ import (
 	"panel/middleware"
 	"panel/utils/router"
 	"panel/utils/database"
+	"panel/utils/comm"
 )
+
+func init() {
+	comm.Init()
+    database.Init()
+	
+}
 
 const (
 	host     = "localhost"
@@ -29,7 +36,7 @@ func main() {
     
     middleware.Init(app)
 	router.Init(app)
-	// app.Get("/*", swagger.HandlerDefault)
+
 	Init()
 	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
 }
