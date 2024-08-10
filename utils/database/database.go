@@ -11,11 +11,11 @@ import (
 var DB *gorm.DB
 
 const (
-	host         = "7.227.73.64"
+	host         = "192.168.1.6"
 	port         = 5432
 	username     = "postgres"
 	password     = "password"
-	databaseName = "postgres"
+	databaseName = "learn"
 )
 
 func Init() {

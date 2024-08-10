@@ -7,24 +7,27 @@ import (
 	"github.com/gofiber/fiber/v3/log"
 
 	"panel/middleware"
-	"panel/utils/router"
-	"panel/utils/database"
 	"panel/utils/comm"
+	"panel/utils/database"
+	"panel/utils/router"
 )
 
 func init() {
 	comm.Init()
-    database.Init()
-	
+	database.Init()
+
 }
 
 const (
-	host     = "localhost"
-	port     = 8050
+	host = "localhost"
+	port = 8050
 )
 
-func Init() {
-    database.Init()
+func Init(app *fiber.App) {
+	middleware.Init(app)
+	router.Init(app)
+
+	database.Init()
 }
 
 // @title Fiber API
@@ -33,10 +36,6 @@ func Init() {
 // @BasePath /api/v1
 func main() {
 	app := fiber.New()
-    
-    middleware.Init(app)
-	router.Init(app)
-
-	Init()
+	Init(app)
 	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
 }

@@ -2,14 +2,14 @@ package middleware
 
 import (
 	// "time"
-	"os"
 	"io"
-	"time"
+	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/logger"
 	"github.com/gofiber/fiber/v3/log"
+	"github.com/gofiber/fiber/v3/middleware/logger"
 
 	"panel/utils/comm"
 )
@@ -19,16 +19,18 @@ var (
 	logLevel = log.LevelInfo
 )
 
-
 func Logger() func(fiber.Ctx) error {
-    
+
 	// 设置 log 输出 level 和 输出文件
 	log.SetLevel(logLevel)
 	comm.MakeDirs(filepath.Dir(logFile))
 	file, err := os.OpenFile(logFile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil { log.Error("Create log failed") }
+	if err != nil {
+		log.Error("Create log failed")
+	}
 	log.SetOutput(io.MultiWriter(os.Stdout, file))
-	
+
+	// 设置 fiber 默认打印格式
 	return logger.New(logger.Config{
 		Next:          nil,
 		Done:          nil,
@@ -39,7 +41,7 @@ func Logger() func(fiber.Ctx) error {
 		Output:        io.MultiWriter(os.Stdout, file),
 		DisableColors: false,
 	})
-    
+
 	// Default
 	// return logger.New(logger.Config{
 	// 	Next:          nil,
