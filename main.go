@@ -12,11 +12,6 @@ import (
 	"panel/utils/router"
 )
 
-func init() {
-	comm.Init()
-	database.Init()
-
-}
 
 const (
 	host = "localhost"
@@ -24,6 +19,7 @@ const (
 )
 
 func Init(app *fiber.App) {
+	comm.Init()
 	middleware.Init(app)
 	router.Init(app)
 
@@ -35,7 +31,15 @@ func Init(app *fiber.App) {
 // @host localhost:8050
 // @BasePath /api/v1
 func main() {
-	app := fiber.New()
+	app := fiber.New(fiber.Config{
+		CaseSensitive: true,
+		StrictRouting: true,
+		ServerHeader:  "Fiber",
+		AppName: "Test App v1.0.1",
+	})
 	Init(app)
-	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port)))
+	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port), fiber.ListenConfig{
+		EnablePrefork: true,
+		DisableStartupMessage: true,
+	}))
 }

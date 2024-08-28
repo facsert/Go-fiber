@@ -30,7 +30,7 @@ func GetNodes(c fiber.Ctx) error {
 	var nodes []map[string]any
 	// database.DB.Table(TABLE_NODE).Find(&nodes)
 	database.DB.Raw("SELECT * FROM " + TABLE_NODE).Scan(&nodes)
-	return c.JSON(nodes)
+	return c.Status(200).JSON(nodes)
 }
 
 // @tags     Node
@@ -43,7 +43,7 @@ func GetNode(c fiber.Ctx) error {
 	sql := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", TABLE_NODE)
 	// database.DB.Table(TABLE_NODE).Where("id = ?", c.Params("id")).Find(&node)
 	database.DB.Raw(sql, c.Params("id")).Scan(&node)
-	return c.JSON(node)
+	return c.Status(200).JSON(node)
 }
 
 func CreateNode(c fiber.Ctx) error {
