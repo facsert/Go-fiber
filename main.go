@@ -2,44 +2,62 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/log"
 
-	"panel/middleware"
-	"panel/utils/comm"
-	"panel/utils/database"
-	"panel/utils/router"
+	"devops/pkgs/comm"
+	"devops/pkgs/db"
+	"devops/api/user"
+	"devops/middleware"
 )
 
-
-const (
-	host = "localhost"
-	port = 8050
+var (
+	HOST = "0.0.0.0"
+	PORT = 3100
+	APP  *fiber.App
 )
 
-func Init(app *fiber.App) {
-	comm.Init()
-	middleware.Init(app)
-	router.Init(app)
-
-	database.Init()
-}
-
-// @title Fiber API
-// @version 1.0.0
-// @host localhost:8050
-// @BasePath /api/v1
 func main() {
-	app := fiber.New(fiber.Config{
-		CaseSensitive: true,
-		StrictRouting: true,
-		ServerHeader:  "Fiber",
-		AppName: "Test App v1.0.1",
-	})
-	Init(app)
-	log.Fatal(app.Listen(fmt.Sprintf("%v:%v", host, port), fiber.ListenConfig{
-		EnablePrefork: true,
-		DisableStartupMessage: true,
-	}))
+	APP = NewApp()
+	defer Listen()
+
+	comm.Init()
+	db.Init()
+
+	InitMiddle()
+	InitRouters()
 }
+
+func NewApp() *fiber.App {
+	return fiber.New(fiber.Config{
+		ServerHeader:  "Develop Server",
+		AppName:       "Develop V1.0.0.0",
+		CaseSensitive: true,
+		StrictRouting: false,
+		BodyLimit:     4 * 1024 * 1024,
+	})
+}
+
+func Listen() {
+	log.Fatal(APP.Listen(
+		fmt.Sprintf("%s:%d", HOST, PORT),
+		fiber.ListenConfig{
+			EnablePrefork:         true,
+			DisableStartupMessage: false,
+			EnablePrintRoutes:     true,
+		},
+	))
+}
+
+func InitMiddle() {
+	middleware.CorsInit(APP)
+	middleware.LoggerInit(APP)
+	middleware.RecoverInit(APP)
+}
+
+func InitRouters() {
+	router := APP.Group("api/v1")
+	user.Init(router)
+}
+

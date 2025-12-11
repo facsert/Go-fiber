@@ -5,12 +5,17 @@ import (
 	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
-func CorsInit() func(fiber.Ctx) error {
-	return cors.New(cors.Config{
+func CorsInit(app *fiber.App) {
+	app.Use(cors.New(cors.Config{
 		Next:             nil,
 		AllowOriginsFunc: nil,
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{ 
+			// 允许请求源列表, * 表示任意请求源
+			"*",
+			// "http://192.168.1.100:3000"
+		},
 		AllowMethods: []string{
+			// 允许请求方法
 			fiber.MethodGet,
 			fiber.MethodPost,
 			fiber.MethodHead,
@@ -18,29 +23,13 @@ func CorsInit() func(fiber.Ctx) error {
 			fiber.MethodDelete,
 			fiber.MethodPatch,
 		},
-		AllowHeaders:        []string{"*"},
+		AllowHeaders:        []string{
+			// 允许请求头列表, * 表示任意请求头
+			"*",
+		},
 		AllowCredentials:    false,
 		ExposeHeaders:       []string{},
 		MaxAge:              0,
 		AllowPrivateNetwork: false,
-	})
-	// Default
-	// return cors.New(cors.Config{
-	// 	Next:             nil,
-	// 	AllowOriginsFunc: nil,
-	// 	AllowOrigins:     []string{"*"},
-	// 	AllowMethods: []string{
-	// 		fiber.MethodGet,
-	// 		fiber.MethodPost,
-	// 		fiber.MethodHead,
-	// 		fiber.MethodPut,
-	// 		fiber.MethodDelete,
-	// 		fiber.MethodPatch,
-	// 	},
-	// 	AllowHeaders:        []string{},
-	// 	AllowCredentials:    false,
-	// 	ExposeHeaders:       []string{},
-	// 	MaxAge:              0,
-	// 	AllowPrivateNetwork: false,
-	// })
+	}))
 }
